@@ -113,6 +113,6 @@ class Current
   end
 end
 
-VIM.echo(Current.new.context, false, {})
+VIM.echo([Current.new.context], false, {})
 RUBY
 endfunction
