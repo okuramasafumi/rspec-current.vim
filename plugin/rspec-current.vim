@@ -1,4 +1,4 @@
-function! MyFunction()
+function! s:RSpecCurrent()
   ruby <<RUBY
 using Module.new { # rubocop:disable Lint/AmbiguousBlockAssociation
   refine RubyVM::AbstractSyntaxTree::Node do
@@ -112,7 +112,18 @@ class Current
     closest_node(class_nodes).children[0].children[1]
   end
 end
+RUBY
+endfunction
 
+function! RSpecCurrentContext()
+  call s:RSpecCurrent()
+  ruby << RUBY
 VIM.echo([[Current.new.context]], false, {})
+RUBY
+endfunction
+
+function! RSpecCurrentSubject()
+  ruby << RUBY
+VIM.echo([[Current.new.subject]], false, {})
 RUBY
 endfunction
