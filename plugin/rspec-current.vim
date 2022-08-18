@@ -123,6 +123,7 @@ RUBY
 endfunction
 
 function! RSpecCurrentSubject()
+  call s:RSpecCurrent()
   ruby << RUBY
 VIM.echo([[Current.new.subject]], false, {})
 RUBY
