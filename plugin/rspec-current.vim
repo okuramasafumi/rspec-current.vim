@@ -118,13 +118,13 @@ endfunction
 function! RSpecCurrentContext()
   call s:RSpecCurrent()
   ruby << RUBY
-VIM.echo([[RspecCurrent.new.context]], false, {})
+RspecCurrent.new.context
 RUBY
 endfunction
 
 function! RSpecCurrentSubject()
   call s:RSpecCurrent()
   ruby << RUBY
-VIM.echo([[RspecCurrent.new.subject]], false, {})
+RspecCurrent.new.subject
 RUBY
 endfunction
