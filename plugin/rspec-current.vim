@@ -19,7 +19,7 @@ using Module.new { # rubocop:disable Lint/AmbiguousBlockAssociation
   end
 }
 
-class Current
+class RspecCurrent
   attr_reader :filename, :line
 
   def initialize(filename = VIM::Buffer.current.name, line = VIM::Buffer.current.line_number)
@@ -118,13 +118,13 @@ endfunction
 function! RSpecCurrentContext()
   call s:RSpecCurrent()
   ruby << RUBY
-VIM.echo([[Current.new.context]], false, {})
+VIM.echo([[RspecCurrent.new.context]], false, {})
 RUBY
 endfunction
 
 function! RSpecCurrentSubject()
   call s:RSpecCurrent()
   ruby << RUBY
-VIM.echo([[Current.new.subject]], false, {})
+VIM.echo([[RspecCurrent.new.subject]], false, {})
 RUBY
 endfunction
