@@ -117,14 +117,10 @@ endfunction
 
 function! RSpecCurrentContext()
   call s:RSpecCurrent()
-  ruby << RUBY
-RspecCurrent.new.context
-RUBY
+  rubyeval("print RspecCurrent.new.context")
 endfunction
 
 function! RSpecCurrentSubject()
   call s:RSpecCurrent()
-  ruby << RUBY
-RspecCurrent.new.subject
-RUBY
+  rubyeval("print RspecCurrent.new.subject")
 endfunction
