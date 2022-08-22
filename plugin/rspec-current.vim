@@ -117,10 +117,10 @@ endfunction
 
 function! RSpecCurrentContext()
   call s:RSpecCurrent()
-  rubyeval("print RspecCurrent.new.context")
+  return rubyeval('RspecCurrent.new.context')
 endfunction
 
 function! RSpecCurrentSubject()
   call s:RSpecCurrent()
-  rubyeval("print RspecCurrent.new.subject")
+  return rubyeval('RspecCurrent.new.subject')
 endfunction
