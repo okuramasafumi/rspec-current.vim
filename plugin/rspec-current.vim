@@ -80,7 +80,7 @@ class RspecCurrent
     end
 
     min_distance = distances.reject(&:negative?).min
-    nearest_subject_node = nodes[distances.index(min_distance)]
+    nodes[distances.index(min_distance)]
   end
 
   def subject
