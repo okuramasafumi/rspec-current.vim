@@ -1,6 +1,6 @@
 function! s:RSpecCurrent()
   ruby <<RUBY
-using Module.new { # rubocop:disable Lint/AmbiguousBlockAssociation
+using Module.new {
   refine RubyVM::AbstractSyntaxTree::Node do
     def traverse(*types, &block)
       if block_given?
