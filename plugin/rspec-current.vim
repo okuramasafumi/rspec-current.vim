@@ -22,13 +22,15 @@ using Module.new {
 class RspecCurrent
   attr_reader :filename, :line
 
-  def initialize(filename = VIM::Buffer.current.name, line = VIM::Buffer.current.line_number)
-    @filename = filename
-    @line = line
+  def initialize(filename = nil, line = nil)
+    current_buffer = VIM::Buffer.current.buffer
+    @buffer_contents = (fllename && line) ? File.read(filename) : current_buffer.get_lines(0, current_buffer.count)
+    @filename = filename || current_buffer.name
+    @line = line || current_buffer.line
   end
 
   def ast
-    @ast ||= RubyVM::AbstractSyntaxTree.parse(File.read(filename))
+    @ast ||= RubyVM::AbstractSyntaxTree.parse(@buffer_contents.join)
   end
 
   def current_node
@@ -71,7 +73,7 @@ class RspecCurrent
   def string_for(node)
     start_line = node.first_lineno
     end_line = node.last_lineno
-    File.readlines(filename)[(start_line - 1)..(end_line - 1)].map(&:strip).join("\n")
+    @buffer_contents[(start_line - 1)..(end_line - 1)].map(&:strip).join("\n")
   end
 
   def closest_node(nodes)
