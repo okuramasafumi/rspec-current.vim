@@ -20,8 +20,6 @@ using Module.new {
 }
 
 class RspecCurrent
-  attr_reader :filename, :line
-
   def initialize(filename = nil, line = nil)
     current_buffer = VIM::Buffer.current.buffer
     @buffer_contents = (fllename && line) ? File.read(filename) : current_buffer.get_lines(0, current_buffer.count)
@@ -39,7 +37,7 @@ class RspecCurrent
 
     # Find the current node
     ast.traverse do |node|
-      distance = line - node.first_lineno
+      distance = @line - node.first_lineno
       break if distance < 0
 
       if distance < min_distance
