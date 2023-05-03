@@ -21,7 +21,7 @@ using Module.new {
 
 class RspecCurrent
   def initialize(filename = nil, line = nil)
-    current_buffer = VIM::Buffer.current.buffer
+    current_buffer = VIM::Buffer.current
     @buffer_contents = (fllename && line) ? File.read(filename) : current_buffer.get_lines(0, current_buffer.count)
     @filename = filename || current_buffer.name
     @line = line || current_buffer.line
