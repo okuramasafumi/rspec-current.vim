@@ -22,13 +22,13 @@ using Module.new {
 class RspecCurrent
   def initialize(filename = nil, line = nil)
     current_buffer = VIM::Buffer.current
-    @buffer_contents = (filename && line) ? File.read(filename) : current_buffer.get_lines(0, current_buffer.count)
+    @buffer_contents = (filename && line) ? File.read(filename) : current_buffer.lines.to_a
     @filename = filename || current_buffer.name
-    @line = line || current_buffer.line
+    @line = line || current_buffer.line_number
   end
 
   def ast
-    @ast ||= RubyVM::AbstractSyntaxTree.parse(@buffer_contents.join)
+    @ast ||= RubyVM::AbstractSyntaxTree.parse(@buffer_contents.join("\n"))
   end
 
   def current_node
@@ -61,6 +61,8 @@ class RspecCurrent
   end
 
   def parent_node_of(target)
+    raise "Target is nil" if target.nil?
+
     ast.traverse(:ITER) do |node|
       if node.parent_of?(target)
         break node
@@ -69,6 +71,8 @@ class RspecCurrent
   end
 
   def string_for(node)
+    raise "Node is nil" if node.nil?
+
     start_line = node.first_lineno
     end_line = node.last_lineno
     @buffer_contents[(start_line - 1)..(end_line - 1)].map(&:strip).join("\n")
@@ -85,12 +89,15 @@ class RspecCurrent
 
   def subject
     subject_nodes = method_nodes_with_name(:subject)
+    return "No subject" if subject_nodes.empty?
+
     string_for(parent_node_of(closest_node(subject_nodes)))
   end
 
   def context
     context_nodes = method_nodes_with_name(:context)
-    context_nodes = method_nodes_with_name(:describe) if context_nodes.empty?
+    return "No context" if context_nodes.empty?
+
     closest_node(context_nodes).children[1].children[0].children[0]
   end
 
