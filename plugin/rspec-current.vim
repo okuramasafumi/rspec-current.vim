@@ -2,12 +2,19 @@ function! s:RSpecCurrent()
   ruby <<RUBY
 using Module.new {
   refine RubyVM::AbstractSyntaxTree::Node do
+    def parent = nil
+
     def traverse(*types, &block)
       if block_given?
         children.each do |node|
+          if node.is_a?(RubyVM::AbstractSyntaxTree::Node)
+            s = self
+            node.define_singleton_method(:parent) { s }
+          end
           yield(node) if node.respond_to?(:type) && (types.empty? || types.include?(node.type))
           node.traverse(*types, &block) if node.respond_to?(:traverse)
         end
+        nil
       else
         to_enum(:traverse, *types)
       end
@@ -15,6 +22,21 @@ using Module.new {
 
     def parent_of?(other)
       children.map(&:node_id).include?(other.node_id)
+    end
+
+    def subtree_for(node_id)
+      subtree = children.select do |nn|
+        next unless nn.is_a?(RubyVM::AbstractSyntaxTree::Node)
+
+        nnn = nn.children.last
+        next unless nnn.is_a?(RubyVM::AbstractSyntaxTree::Node)
+
+        result = nnn.traverse do |nnnn|
+          break :found if nnnn.node_id == node_id
+        end
+        result == :found
+      end
+      return subtree.first unless subtree.empty?
     end
   end
 }
@@ -48,7 +70,7 @@ class RspecCurrent
     c
   end
 
-  def method_nodes_with_name(*names)
+  def method_nodes_with_name(*names, ast: self.ast)
     nodes = []
 
     ast.traverse(:FCALL) do |node|
@@ -60,22 +82,15 @@ class RspecCurrent
     nodes
   end
 
-  def parent_node_of(target)
+  def string_for(target)
     raise "Target is nil" if target.nil?
 
-    ast.traverse(:ITER) do |node|
-      if node.parent_of?(target)
-        break node
-      end
+    case target.children.first
+    when :subject
+      target.parent.children.last.children.last.children.last
+    when :context
+      target.children.last.children.first.children.first
     end
-  end
-
-  def string_for(node)
-    raise "Node is nil" if node.nil?
-
-    start_line = node.first_lineno
-    end_line = node.last_lineno
-    @buffer_contents[(start_line - 1)..(end_line - 1)].map(&:strip).join("\n")
   end
 
   def closest_node(nodes)
@@ -87,18 +102,27 @@ class RspecCurrent
     nodes[distances.index(min_distance)]
   end
 
-  def subject
-    subject_nodes = method_nodes_with_name(:subject)
-    return "No subject" if subject_nodes.empty?
+  def subtree
+    ast.subtree_for(current_node.node_id)
+  end
 
-    string_for(parent_node_of(closest_node(subject_nodes)))
+  def subject_node_in_parent_chain
+    node = current_node
+    while node
+      sn = node.children.find { _1.respond_to?(:type) && _1.type == :ITER && _1.children[0].type == :FCALL && _1.children[0].children[0] == :subject }
+      break sn if sn
+      node = node.parent
+    end
+  end
+
+  def subject
+    node = subject_node_in_parent_chain
+    node.children[1].children.last.children.last
   end
 
   def context
-    context_nodes = method_nodes_with_name(:context)
-    return "No context" if context_nodes.empty?
-
-    closest_node(context_nodes).children[1].children[0].children[0]
+    context_nodes = method_nodes_with_name(:context, ast: subtree)
+    string_for(closest_node(context_nodes))
   end
 
   def lets
