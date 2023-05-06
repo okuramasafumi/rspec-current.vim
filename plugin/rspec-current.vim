@@ -53,6 +53,10 @@ class RspecCurrent
     @ast ||= RubyVM::AbstractSyntaxTree.parse(@buffer_contents.join("\n"))
   end
 
+  def rspec?
+    @filename&.end_with?('_spec.rb')
+  end
+
   def current_node
     c = nil
     min_distance = 10000 # 10000 is MAX
@@ -116,16 +120,22 @@ class RspecCurrent
   end
 
   def subject
+    return '' unless rspec?
+
     node = subject_node_in_parent_chain
     node.children[1].children.last.children.last
   end
 
   def context
+    return '' unless rspec?
+
     context_nodes = method_nodes_with_name(:context, ast: subtree)
     string_for(closest_node(context_nodes))
   end
 
   def lets
+    return '' unless rspec?
+
     let_nodes = method_nodes_with_name(:let, :let!).select {|node| node.first_lineno < current_node.first_lineno }
     grouped_let_nodes = let_nodes.group_by do |node|
       node.children[1].children[0].children[0] # Name for let, 'foo' for let(:foo)
