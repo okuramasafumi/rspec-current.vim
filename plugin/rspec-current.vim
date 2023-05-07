@@ -50,7 +50,7 @@ class RspecCurrent
   end
 
   def ast
-    @ast ||= RubyVM::AbstractSyntaxTree.parse(@buffer_contents.join("\n"))
+    @ast ||= RubyVM::AbstractSyntaxTree.parse(@buffer_contents.join("\n"), keep_tokens: true)
   end
 
   def rspec?
@@ -123,7 +123,7 @@ class RspecCurrent
     return '' unless rspec?
 
     node = subject_node_in_parent_chain
-    node.children[1].children.last.children.last
+    node.children.last.children.last.tokens.map { _1[2] }.join
   end
 
   def context
