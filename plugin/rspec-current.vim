@@ -50,7 +50,7 @@ class RspecCurrent
   end
 
   def ast
-    @ast ||= RubyVM::AbstractSyntaxTree.parse(@buffer_contents.join("\n"), keep_tokens: true)
+    @ast ||= RubyVM::AbstractSyntaxTree.parse(@buffer_contents.join("\n"), keep_tokens: true, error_tolerant: true)
   end
 
   def rspec?
