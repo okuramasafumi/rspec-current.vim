@@ -4,6 +4,10 @@
 
 It's very unstable. It's not documented yet and the implementation is immature. Feel free to try it but everything is subject to change in the future.
 
+## Limitations
+
+It required Ruby 3.2 since it uses new features added to `RubyVM::AbstractSyntaxTree` in Ruby 3.2.
+
 ## Usage
 
 Install it with your favorite package manager. After installation, two functions are available.
