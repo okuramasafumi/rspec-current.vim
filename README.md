@@ -9,7 +9,7 @@ It's very unstable. It's not documented yet and the implementation is immature. 
 Install it with your favorite package manager. After installation, two functions are available.
 
 * `RSpecCurrentSubject`: Returns current `subject` as a String
-* `RSpecCurrentContext` Returns current `context` or `describe` as a String
+* `RSpecCurrentContext` Returns current `context` as a String
 
 Then you can echo it with something like:
 
