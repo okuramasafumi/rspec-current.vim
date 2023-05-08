@@ -41,7 +41,7 @@ using Module.new {
   end
 }
 
-class RspecCurrent
+class RSpecCurrent
   def initialize(filename = nil, line = nil)
     current_buffer = VIM::Buffer.current
     @buffer_contents = (filename && line) ? File.read(filename) : current_buffer.lines.to_a
@@ -158,10 +158,10 @@ endfunction
 
 function! RSpecCurrentContext()
   call s:RSpecCurrent()
-  return rubyeval('RspecCurrent.new.context')
+  return rubyeval('RSpecCurrent.new.context')
 endfunction
 
 function! RSpecCurrentSubject()
   call s:RSpecCurrent()
-  return rubyeval('RspecCurrent.new.subject')
+  return rubyeval('RSpecCurrent.new.subject')
 endfunction
