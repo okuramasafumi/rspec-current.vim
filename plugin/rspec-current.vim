@@ -20,10 +20,6 @@ using Module.new {
       end
     end
 
-    def parent_of?(other)
-      children.map(&:node_id).include?(other.node_id)
-    end
-
     def subtree_for(node_id)
       subtree = children.select do |nn|
         next unless nn.is_a?(RubyVM::AbstractSyntaxTree::Node)
