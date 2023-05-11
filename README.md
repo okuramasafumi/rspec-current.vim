@@ -20,3 +20,5 @@ Then you can echo it with something like:
 ```vim
 :echo RSpecCurrentSubject()
 ```
+
+You can set these functions in your statusline plugin to track current subject/context.
