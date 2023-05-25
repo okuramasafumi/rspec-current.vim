@@ -10,7 +10,13 @@ It required Ruby 3.2 since it uses new features added to `RubyVM::AbstractSyntax
 
 ## Usage
 
-Install it with your favorite package manager. After installation, two functions are available.
+First, install `neovim` gem.
+
+```sh
+gem install neovim
+```
+
+Then install it with your favorite package manager. After installation, two functions are available.
 
 * `RSpecCurrentSubject`: Returns current `subject` as a String
 * `RSpecCurrentContext` Returns current `context` as a String
